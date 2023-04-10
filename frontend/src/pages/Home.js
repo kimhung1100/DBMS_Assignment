@@ -21,13 +21,17 @@ const Home = () => {
       productName: "",
       categoryName: "",
     }
-  useEffect(() =>{
-    axios.get(`http://localhost:${BackendPORT}/FeaturedCollection`).then((response)=>{
-      console.log(response.data);
-      setProducts(response.data);
+    useEffect(() =>{
+      axios.get(`http://localhost:${BackendPORT}/FeaturedCollection`).then((response)=>{
+        console.log(response.data);
+        setProducts(response.data);
+        console.log(products);
+      });
+    }, [id])
+    useEffect(() => {
+      console.log("printing products")
       console.log(products);
-    });
-  }, [id])
+    }, [products]);
   return (
     
     <>
@@ -125,7 +129,7 @@ const Home = () => {
           
             
           {products.map((product) => (
-  <div className={"gr-2 col-3"} key={product._id}>
+  <div className={"gr-2 col-3"} key={product.id}>
     <div className="product-card position-relative">
           <div className="product-image">
             <img src={watch} className="img-fluid" alt="product image" />
@@ -134,7 +138,7 @@ const Home = () => {
 
       <div className="product-details">
         {/* <h6 className="brand">{product.brand}</h6> */}
-        <h5 className="product-title">{product.airportname}</h5>
+        <h5 className="product-title">{product.name}</h5>
         <ReactStars
           count={5}
           size={24}

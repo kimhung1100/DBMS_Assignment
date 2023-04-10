@@ -43,7 +43,7 @@ const couchbase = require('couchbase')
 const clusterConnStr = 'couchbase://localhost'
 const username = 'Administrator'
 const password = '123456'
-const bucketName = 'travel-sample'
+const bucketName = 'Ecommerce'
 
 async function main() {
   var cluster = await couchbase.connect(
@@ -54,7 +54,7 @@ async function main() {
   })
   console.log("Database Connected Successfully");
   
-  var bucket = cluster.bucket('travel-sample')
+  var bucket = cluster.bucket(bucketName)
 
   app.use(morgan("dev"));
   app.use(cors());
@@ -65,13 +65,17 @@ async function main() {
   app.get('/FeaturedCollection', runAsync(async (req, res) => {
 
     // options = { parameters: { AIRPORT: searchTerm.toLowerCase() } }
-    where = 'country="United States"' // hardcode for now
-    let qs = `SELECT airportname from \`travel-sample\`.inventory.airport WHERE ${ where } limit 8;`
+    let qs = `SELECT * from \`${bucketName}\`.firstCompany.inventory limit 8;`
     const result = await cluster.query(qs)
     const data = result.rows
     const context = ['FeaturedCollection', data]
     return res.send(data)
-
+    // where = 'country="United States"' // hardcode for now
+    // let qs = `SELECT airportname from \`travel-sample\`.inventory.airport WHERE ${ where } limit 8;`
+    // const result = await cluster.query(qs)
+    // const data = result.rows
+    // const context = ['FeaturedCollection', data]
+    // return res.send(data)
   }))
 
   app.listen(PORT, () => {
