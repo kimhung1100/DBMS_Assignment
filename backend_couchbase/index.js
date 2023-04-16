@@ -1,20 +1,10 @@
 const bodyParser = require("body-parser");
 const express = require("express");
-// const dbConnect = require("./config/dbConnect");
-// const { notFound, errorHandler } = require("./middlewares/errorHandler");
+
 const app = express();
 const dotenv = require("dotenv").config();
 const PORT = 5000;
-// const authRouter = require("./routes/authRoute");
-// const productRouter = require("./routes/productRoute");
-// // const blogRouter = require("./routes/blogRoute");
-// const categoryRouter = require("./routes/prodcategoryRoute");
-// const blogcategoryRouter = require("./routes/blogCatRoute");
-// const brandRouter = require("./routes/brandRoute");
-// const colorRouter = require("./routes/colorRoute");
-// const enqRouter = require("./routes/enqRoute");
-// const couponRouter = require("./routes/couponRoute");
-// const uploadRouter = require("./routes/uploadRoute");
+
 const cookieParser = require("cookie-parser");
 const morgan = require("morgan");
 const cors = require("cors");
@@ -24,19 +14,9 @@ const couchbase = require('couchbase')
 
 // dbConnect();
 
-// app.use("/api/user", authRouter);
-// app.use("/api/product", productRouter);
-// app.use("/api/blog", blogRouter);
-// app.use("/api/category", categoryRouter);
-// app.use("/api/blogcategory", blogcategoryRouter);
-// app.use("/api/brand", brandRouter);
-// app.use("/api/coupon", couponRouter);
-// app.use("/api/color", colorRouter);
-// app.use("/api/enquiry", enqRouter);
-// app.use("/api/upload", uploadRouter);
 
-// app.use(notFound);
-// app.use(errorHandler);
+
+
 // database connection
 
 // Connect to the cluster and open the bucket couchbase://localhost
@@ -70,13 +50,38 @@ async function main() {
     const data = result.rows
     const context = ['FeaturedCollection', data]
     return res.send(data)
-    // where = 'country="United States"' // hardcode for now
-    // let qs = `SELECT airportname from \`travel-sample\`.inventory.airport WHERE ${ where } limit 8;`
-    // const result = await cluster.query(qs)
-    // const data = result.rows
-    // const context = ['FeaturedCollection', data]
-    // return res.send(data)
   }))
+
+
+  app.post('/api/login', runAsync (async (req, res) => {
+    const { email, password } = req.body;
+    let qs = `SELECT * from \`${bucketName}\`.firstCompany.customers where email = '${email}';`
+    const result = await cluster.query(qs)
+    if (result.rows.length === 0) {
+      return res.status(205).send("Email not registered");
+    }
+    else if (result.rows.length === 1) {
+      const user = result.rows[0]
+      if (password === user.customers.hashedAndSaltedPassword) {
+        // Create token
+        // const token = jwt.sign(
+        //   { user_id: email },
+        //   process.env.JWT_KEY
+        // );
+        // save user token
+        // user.token = token;
+        return res.status(200).send(user);
+      } else{
+        return res.status(205).send("Invalid password");
+      }
+      
+
+        
+
+    }
+  }));
+
+
 
   app.listen(PORT, () => {
     console.log(`Connecting to backend Couchbase server`)
