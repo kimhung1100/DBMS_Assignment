@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import ReactStars from "react-rating-stars-component";
 import BreadCrumb from "../components/BreadCrumb";
 import Meta from "../components/Meta";
@@ -10,16 +10,31 @@ import { AiOutlineHeart } from "react-icons/ai";
 import { Link } from "react-router-dom";
 import watch from "../images/watch.jpg";
 import Container from "../components/Container";
+import { useNavigate, useParams } from "react-router-dom";
+import axios from "axios";
+const BackendPORT = 5000;
 const SingleProduct = () => {
   const props = {
     width: 594,
     height: 600,
     zoomWidth: 600,
 
-    img: "https://images.pexels.com/photos/190819/pexels-photo-190819.jpeg?cs=srgb&dl=pexels-fernando-arcos-190819.jpg&fm=jpg",
+    img: "https://picsum.photos/id/1018/1000/600/",
   };
 
-  const [orderedProduct, setorderedProduct] = useState(true);
+  // const [orderedProduct, setorderedProduct] = useState(true);
+  const { id } = useParams();
+  const [product, setproduct] = useState({});
+  useEffect(() => {
+    axios.get(`http://localhost:${BackendPORT}/product/${id}`).then((response) => {
+      console.log(response.data);
+      setproduct(response.data);
+      props.img = product.inventory ? product.inventory.skus[0].options.images[0] : "https://images.pexels.com/photos/190819/pexels-photo-190819.jpeg?cs=srgb&dl=pexels-fernando-arcos-190819.jpg&fm=jpg";
+      // console.log(product.inventory.skus[0].options.images[0])
+    });
+  }, [id]);
+
+
   const copyToClipboard = (text) => {
     console.log("text", text);
     var textField = document.createElement("textarea");
@@ -32,7 +47,7 @@ const SingleProduct = () => {
   const closeModal = () => {};
   return (
     <>
-      <Meta title={"Product Name"} />
+      <Meta title={product.inventory ? product.inventory.item : "Product Name"} />
       <BreadCrumb title="Product Name" />
       <Container class1="main-product-wrapper py-5 home-wrapper-2">
         <div className="row">
@@ -45,7 +60,10 @@ const SingleProduct = () => {
             <div className="other-product-images d-flex flex-wrap gap-15">
               <div>
                 <img
-                  src="https://images.pexels.com/photos/190819/pexels-photo-190819.jpeg?cs=srgb&dl=pexels-fernando-arcos-190819.jpg&fm=jpg"
+                  src= {
+                    product.inventory ? product.inventory.skus[0].options.images[0] : "https://images.pexels.com/photos/190819/pexels-photo-190819.jpeg?cs=srgb&dl=pexels-fernando-arcos-190819.jpg&fm=jpg"
+                  }
+                  
                   className="img-fluid"
                   alt=""
                 />
@@ -77,7 +95,7 @@ const SingleProduct = () => {
             <div className="main-product-details">
               <div className="border-bottom">
                 <h3 className="title">
-                  Kids Headphones Bulk 10 Pack Multi Colored For Students
+                  {product.inventory ? product.inventory.item : "Product Name"}
                 </h3>
               </div>
               <div className="border-bottom py-3">
@@ -118,20 +136,24 @@ const SingleProduct = () => {
                   <p className="product-data">In Stock</p>
                 </div>
                 <div className="d-flex gap-10 flex-column mt-2 mb-3">
-                  <h3 className="product-heading">Size :</h3>
+                  <h3 className="product-heading">Version :</h3>
                   <div className="d-flex flex-wrap gap-15">
-                    <span className="badge border border-1 bg-white text-dark border-secondary">
-                      S
+                  {product.inventory? product.inventory.skus.map((sku, index) => (
+                    <span key = {index} className="badge border border-1 bg-white text-dark border-secondary">
+                      {sku.sku}
                     </span>
-                    <span className="badge border border-1 bg-white text-dark border-secondary">
-                      M
+                  )): "Loading"}
+                  
+                  </div>
+
+                  <h3 className="product-heading">Color :</h3>
+                  <div className="d-flex flex-wrap gap-15">
+                  {product.inventory? product.inventory.skus.map((sku, index) => (
+                    <span key = {index} className="badge border border-1 bg-white text-dark border-secondary">
+                      {sku.options.color[0]}
                     </span>
-                    <span className="badge border border-1 bg-white text-dark border-secondary">
-                      XL
-                    </span>
-                    <span className="badge border border-1 bg-white text-dark border-secondary">
-                      XXL
-                    </span>
+                  )): "Loading"}
+                  
                   </div>
                 </div>
                 <div className="d-flex gap-10 flex-column mt-2 mb-3">
@@ -207,10 +229,7 @@ const SingleProduct = () => {
             <h4>Description</h4>
             <div className="bg-white p-3">
               <p>
-                Lorem ipsum dolor, sit amet consectetur adipisicing elit.
-                Tenetur nisi similique illum aut perferendis voluptas, quisquam
-                obcaecati qui nobis officia. Voluptatibus in harum deleniti
-                labore maxime officia esse eos? Repellat?
+              {product.inventory? product.inventory.features[0]: "Lorem"}
               </p>
             </div>
           </div>
@@ -235,13 +254,14 @@ const SingleProduct = () => {
                     <p className="mb-0">Based on 2 Reviews</p>
                   </div>
                 </div>
-                {orderedProduct && (
+                {/* {orderedProduct && (
                   <div>
                     <a className="text-dark text-decoration-underline" href="">
                       Write a Review
                     </a>
                   </div>
-                )}
+                )} */}
+
               </div>
               <div className="review-form py-4">
                 <h4>Write a Review</h4>
@@ -283,28 +303,16 @@ const SingleProduct = () => {
                     />
                   </div>
                   <p className="mt-3">
-                    Lorem ipsum dolor sit amet consectetur, adipisicing elit.
-                    Consectetur fugit ut excepturi quos. Id reprehenderit
-                    voluptatem placeat consequatur suscipit ex. Accusamus dolore
-                    quisquam deserunt voluptate, sit magni perspiciatis quas
-                    iste?
+                    Good product. I am happy with the product. I am happy with
                   </p>
                 </div>
               </div>
+              
             </div>
           </div>
         </div>
       </Container>
-      <Container class1="popular-wrapper py-5 home-wrapper-2">
-        <div className="row">
-          <div className="col-12">
-            <h3 className="section-heading">Our Popular Products</h3>
-          </div>
-        </div>
-        <div className="row">
-          <ProductCard />
-        </div>
-      </Container>
+      
 
       <div
         className="modal fade"

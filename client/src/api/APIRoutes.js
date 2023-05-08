@@ -1,5 +1,5 @@
 export const host = "http://localhost:5000";
-export const registerRoute = `${host}/api/register`
-export const loginRoute = `${host}/api/login`
-export const addItemRoute = `${host}/api/add-item`
-export const getItemRoute = `${host}/api/get-item`
+export const registerRoute = `http://localhost:5000/api/register`
+export const loginRoute = `http://localhost:5000/api/login`
+export const addItemRoute = `http://localhost:5000/api/add-item`
+export const getItemRoute = `http://localhost:5000/api/get-item`

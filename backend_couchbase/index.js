@@ -51,16 +51,31 @@ async function main() {
     const context = ['FeaturedCollection', data]
     return res.send(data)
   }))
+  app.get('/product/:id', runAsync(async (req, res) => {
+    const productId = req.params.id;
 
+    const qs = `SELECT * FROM \`${bucketName}\`.firstCompany.inventory WHERE id = '${productId}'`;
+    const result = await cluster.query(qs);
+    const data = result.rows;
+    if (!data || data.length === 0) {
+      return res.status(404).send({ error: 'Product not found' });
+    }
+  
+    return res.send(data[0]);
+  }));
+  
 
   app.post('/api/login', runAsync (async (req, res) => {
     const { email, password } = req.body;
     let qs = `SELECT * from \`${bucketName}\`.firstCompany.customers where email = '${email}';`
     const result = await cluster.query(qs)
+    console.log(result)
+
     if (result.rows.length === 0) {
       return res.status(205).send("Email not registered");
     }
     else if (result.rows.length === 1) {
+
       const user = result.rows[0]
       if (password === user.customers.hashedAndSaltedPassword) {
         // Create token
@@ -74,12 +89,10 @@ async function main() {
       } else{
         return res.status(205).send("Invalid password");
       }
-      
-
-        
-
     }
   }));
+
+
 
 
 

@@ -31,8 +31,12 @@ const Home = () => {
     useEffect(() => {
       console.log("printing products")
       console.log(products);
+      // console.log(products[0])
     }, [products]);
-  return (
+    const handleProductClick = (productId) => {
+      navigate(`/product/${productId}`);
+    };
+    return (
     
     <>
      {/* first container (5 picture) */}
@@ -129,16 +133,23 @@ const Home = () => {
           
             
           {products.map((product) => (
-  <div className={"gr-2 col-3"} key={product.id}>
-    <div className="product-card position-relative">
-          <div className="product-image">
-            <img src={watch} className="img-fluid" alt="product image" />
-            <img src={watch2} className="img-fluid" alt="product image" />
-          </div>
+            <div className={"gr-2 col-3"} key={product.id} onClick={() => handleProductClick (product.inventory.id)}>
+              <div className="product-card position-relative">
+              <div className="product-image">
+            {product.inventory.skus.length > 1 ?
+              <>
+                <img src={product.inventory.skus[0].options.images[0]} className="img-fluid" alt="product image" />
+                <img src={product.inventory.skus[1].options.images[0]} className="img-fluid" alt="product image" />
+              </>
+              :
+              <img src={product.inventory.skus[0].options.images[0]} className="img-fluid" alt="product image" />
+            }
+</div>
 
       <div className="product-details">
-        {/* <h6 className="brand">{product.brand}</h6> */}
-        <h5 className="product-title">{product.name}</h5>
+      <h6 className="brand">{product.inventory.categories.join(', ')}</h6>
+        <h5 className="product-title">{product.inventory.item}</h5>
+
         <ReactStars
           count={5}
           size={24}
