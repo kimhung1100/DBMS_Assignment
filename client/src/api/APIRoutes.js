@@ -1,5 +1,5 @@
-export const host = "http://localhost:5000";
-export const registerRoute = `http://localhost:5000/api/register`
-export const loginRoute = `http://localhost:5000/api/login`
-export const addItemRoute = `http://localhost:5000/api/add-item`
-export const getItemRoute = `http://localhost:5000/api/get-item`
+export const host = "https://c151-1-53-54-255.ngrok-free.app";
+export const registerRoute = `${host}/register`
+export const loginRoute = `${host}/login`
+export const addItemRoute = `${host}/add-item`
+export const getItemRoute = `${host}/get-item`

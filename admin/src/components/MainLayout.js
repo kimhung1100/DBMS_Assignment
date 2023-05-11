@@ -31,7 +31,7 @@ const MainLayout = () => {
         <div className="logo">
           <h2 className="text-white fs-5 text-center py-3 mb-0">
             <span className="sm-logo">DC</span>
-            <span className="lg-logo">Dev Corner</span>
+            <span className="lg-logo">Hightech Store</span>
           </h2>
         </div>
         <Menu

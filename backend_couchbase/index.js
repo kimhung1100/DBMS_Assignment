@@ -65,7 +65,7 @@ async function main() {
   }));
   
 
-  app.post('/api/login', runAsync (async (req, res) => {
+  app.post('/login', runAsync (async (req, res) => {
     const { email, password } = req.body;
     let qs = `SELECT * from \`${bucketName}\`.firstCompany.customers where email = '${email}';`
     const result = await cluster.query(qs)

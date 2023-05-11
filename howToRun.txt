@@ -1,0 +1,24 @@
+// run server
+
+windows R
+services.msc
+start mysql80 
+mysql workbench
+
+/// run backend
+ngrok http http://localhost:5000
+
+copy tunnel to link_api meta.js
+
+thêm / vào cuối link
+
+chỉnh connect db
+
+run app.py in backend folder 
+
+/// run frontend
+
+open virtual device in android studio
+npm start
+a
+
