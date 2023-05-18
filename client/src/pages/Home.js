@@ -144,7 +144,7 @@ const Home = () => {
               :
               <img src={product.inventory.skus[0].options.images[0]} className="img-fluid" alt="product image" />
             }
-</div>
+      </div>
 
       <div className="product-details">
       <h6 className="brand">{product.inventory.categories.join(', ')}</h6>

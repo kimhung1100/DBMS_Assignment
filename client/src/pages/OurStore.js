@@ -1,13 +1,75 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
+import axios from "axios";
+import { Link, useParams, useNavigate } from "react-router-dom";
+import { BsSearch } from "react-icons/bs";
 import BreadCrumb from "../components/BreadCrumb";
 import Meta from "../components/Meta";
 import ReactStars from "react-rating-stars-component";
 import ProductCard from "../components/ProductCard";
 import Color from "../components/Color";
 import Container from "../components/Container";
-
+const BackendPORT = 5000;
 const OurStore = () => {
+  let {id} = useParams();
+  const navigate = useNavigate();
   const [grid, setGrid] = useState(4);
+  const [searchQuery, setSearchQuery] = useState('');
+  const [products, setProducts] = useState([]);
+  const [clicked, setClicked] = useState(false);
+  const [searchCategory , setSearchCategory] = useState('');
+  // useEffect(() =>{
+  //   axios.get(`http://localhost:${BackendPORT}/FeaturedCollection`).then((response)=>{
+  //     console.log(response.data);
+  //     setProducts(response.data);
+  //     console.log(products);
+  //   });
+  // }, [id])
+  // useEffect(() => {
+  //   console.log("printing products")
+  //   console.log(products);
+  //   // console.log(products[0])
+  // }, [products]);
+
+  const handleSearchInputChange = (event) => {
+    setSearchQuery(event.target.value);
+  };
+  const [selectedCategory, setSelectedCategory] = useState('');
+
+  const handleCategoryClick = (category) => {
+    if (category === 'None') {
+      setSelectedCategory('');
+    }else {
+      setSelectedCategory(category);
+    }
+    
+  };
+
+  useEffect(() => {
+    console.log('Selected category:', selectedCategory);
+  }, [selectedCategory]);
+
+
+  const handleSearchClick = async () => {
+    try {
+      // const response = await axios.get(
+      //   `http://localhost:${BackendPORT}/ourProduct?search=${searchQuery}`
+      // );
+      const response = await axios.get(
+        `http://localhost:${BackendPORT}/ourProduct?search=${searchQuery}&category=${selectedCategory}`
+      );
+      console.log("--------> response.data");
+      console.log(response.data);
+      setProducts(response.data);
+      
+    } catch (error) {
+      console.error('Error fetching products:', error);
+    }
+  };
+  
+  
+  const handleProductClick = (productId) => {
+    navigate(`/product/${productId}`);
+  };
   return (
     <>
       <Meta title={"Our Store"} />
@@ -16,44 +78,52 @@ const OurStore = () => {
         <div className="row">
           <div className="col-3">
             <div className="filter-card mb-3">
-              <h3 className="filter-title">Shop By Categories</h3>
-              <div>
-                <ul className="ps-0">
-                  <li>Watch</li>
-                  <li>Tv</li>
-                  <li>Camera</li>
-                  <li>Laptop</li>
-                </ul>
-              </div>
+              
             </div>
+
             <div className="filter-card mb-3">
               <h3 className="filter-title">Filter By</h3>
               <div>
-                <h5 className="sub-title">Availablity</h5>
-                <div>
-                  <div className="form-check">
+                
+                <div className="col-12">
+                  <div className="input-group">
                     <input
-                      className="form-check-input"
-                      type="checkbox"
-                      value=""
-                      id=""
+                      type="text"
+                      className="form-control py-2"
+                      placeholder="Search Product Here..."
+                      aria-label="Search Product Here..."
+                      aria-describedby="basic-addon2"
+                      value={searchQuery}
+                      onChange={handleSearchInputChange}
                     />
-                    <label className="form-check-label" htmlFor="">
-                      In Stock (1)
-                    </label>
-                  </div>
-                  <div className="form-check">
-                    <input
-                      className="form-check-input"
-                      type="checkbox"
-                      value=""
-                      id=""
-                    />
-                    <label className="form-check-label" htmlFor="">
-                      Out of Stock(0)
-                    </label>
+                    {/* <span className="input-group-text p-3" id="basic-addon2">
+                      <BsSearch className="fs-6" />
+                    </span> */}
+                    <button className="btn btn-primary" onClick={handleSearchClick}>
+                        Search
+                      </button>
                   </div>
                 </div>
+
+                <div>
+      <h5 className="sub-title">Shop By Categories</h5>
+      <div>
+        <ul className="ps-0">
+          <li onClick={() => handleCategoryClick('Electronics')}>Electronics</li>
+          <li onClick={() => handleCategoryClick('Accessories')}>Accessories</li>
+          <li onClick={() => handleCategoryClick('Computers')}>Computers</li>
+          <li onClick={() => handleCategoryClick('Peripherals')}>Peripherals</li>
+          <li onClick={() => handleCategoryClick('Storage Devices')}>Storage Devices</li>
+          <li onClick={() => handleCategoryClick('None')}>None</li>
+        </ul>
+      </div>
+      {selectedCategory && (
+        <div>
+          <h6>Selected Category: {selectedCategory}</h6>
+        </div>
+      )}
+    </div>
+
                 <h5 className="sub-title">Price</h5>
                 <div className="d-flex align-items-center gap-10">
                   <div className="form-floating">
@@ -75,35 +145,9 @@ const OurStore = () => {
                     <label htmlFor="floatingInput1">To</label>
                   </div>
                 </div>
-                <h5 className="sub-title">Colors</h5>
-                <div>
-                  <Color />
-                </div>
-                <h5 className="sub-title">Size</h5>
-                <div>
-                  <div className="form-check">
-                    <input
-                      className="form-check-input"
-                      type="checkbox"
-                      value=""
-                      id="color-1"
-                    />
-                    <label className="form-check-label" htmlFor="color-1">
-                      S (2)
-                    </label>
-                  </div>
-                  <div className="form-check">
-                    <input
-                      className="form-check-input"
-                      type="checkbox"
-                      value=""
-                      id="color-2"
-                    />
-                    <label className="form-check-label" htmlFor="color-2">
-                      M (2)
-                    </label>
-                  </div>
-                </div>
+                
+                
+
               </div>
             </div>
             <div className="filter-card mb-3">
@@ -171,6 +215,7 @@ const OurStore = () => {
                     />
                     <b>$ 300</b>
                   </div>
+
                 </div>
               </div>
             </div>
@@ -242,8 +287,30 @@ const OurStore = () => {
             </div>
             <div className="products-list pb-5">
               <div className="d-flex gap-10 flex-wrap">
-                <ProductCard grid={grid} />
+              {products.map((product) => (
+                <div className={"gr-2 col-3"} key={product.id} onClick={() => handleProductClick(product.id)}>
+                  <div className="product-card position-relative">
+                    <div className="product-image">
+                      {Array.isArray(product.images) && product.images.length >  1 ? (
+                        <React.Fragment>
+                          <img src={product.images[0]} className="img-fluid" alt="product image" />
+                          <img src={product.images[1]} className="img-fluid" alt="product image" />
+                        </React.Fragment>
+                      ) : (
+                        <img src={product.images[0]} className="img-fluid" alt="product image" />
+                      )}
+                    </div>
+                    {/* <h6 className="brand">{product.inventory.categories.join(', ')}</h6> */}
+                    <h5 className="product-title">{product.item}</h5>
+                    <p className="price">${product.min_price}</p>
+                  </div>
+                </div>
+                
+              ))}
+              
+       
               </div>
+              
             </div>
           </div>
         </div>
